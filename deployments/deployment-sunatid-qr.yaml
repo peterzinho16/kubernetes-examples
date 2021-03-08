@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sunatid-qr
+  labels:
+    app: microservices
+    tier: backend
+spec:
+  template:
+    metadata:
+      name: sunatid-qr
+      labels:
+        env: development
+        app: microservices
+    spec:
+      containers:
+        - name: sunatid-qr
+          image: sunatid:qr
+          envFrom:
+            - configMapRef:
+                name: asd-as
+  selector:
+    matchLabels:
+      env: development
+  replicas: 2

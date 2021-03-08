@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-hogarep
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /professional
+            backend:
+              service:
+                name: service-hogarep
+                port:
+                  - name: http
+                    number: 80
+          - path: /worker
+            backend:
+              service:
+                name: service-hogarep
+                port:
+                  - name: http
+                    number: 80

@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hogerep-deployment
+  labels:
+    app: backend
+    tier: learning
+spec:
+  template:
+    metadata:
+      name: nginx
+      labels:
+        env: production
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+  selector:
+    matchLabels:
+      env: production
+  replicas: 3
+  strategy:
+    type: RollingUpdate

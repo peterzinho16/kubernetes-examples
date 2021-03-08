@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-nginx-adv-selector
+  labels:
+    feature: nodeSelector
+spec:
+  template:
+    metadata:
+      name: nginx
+      labels:
+        podAvcSel: test
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: color
+                    operator: Exists
+                    values:
+                      - blue
+      tolerations:
+        - key: app
+          operator: Equal
+          value: blue
+          effect: NoExecute
+        - key: tmp
+          operator: Equal
+          value: test-no-exec
+          effect: NoExecute
+        - key: app
+          operator: Equal
+          value: web
+          effect: NoSchedule
+      containers:
+          - command:
+            - "nginx"
+            - "-g"
+            - "daemon off;"
+            name: nginx
+            image: nginx
+            ports:
+              - containerPort: 80
+  selector:
+    matchLabels:
+      podAvcSel: test
+  replicas: 1
+  strategy:
+    type: RollingUpdate

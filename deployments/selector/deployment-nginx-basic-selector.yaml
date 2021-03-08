@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-nginx-basic-selector
+  labels:
+    feature: nodeSelector
+spec:
+  template:
+    metadata:
+      name: nginx
+      labels:
+        env: production
+    spec:
+      nodeSelector:
+        nodeType: test
+        size: uncategorized
+      tolerations:
+        - key: app
+          operator: Equal
+          value: blue
+          effect: NoExecute
+        - key: tmp
+          operator: Equal
+          value: test-no-exec
+          effect: NoExecute
+        - key: app
+          operator: Equal
+          value: web
+          effect: NoSchedule
+      containers:
+          - command:
+            - "nginx"
+            - "-g"
+            - "daemon off;"
+            name: nginx
+            image: nginx
+            ports:
+              - containerPort: 80
+                protocol: TCP
+            resources:
+              requests:
+                cpu: 100m
+                memory: 200Mi
+              limits:
+                cpu: 400m
+                memory: 500Mi
+  selector:
+    matchLabels:
+      env: production
+  replicas: 2
+  strategy:
+    type: RollingUpdate

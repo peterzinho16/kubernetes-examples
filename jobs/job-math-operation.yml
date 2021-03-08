@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-math-operation
+  labels:
+    type: experimental
+    env: local
+spec:
+  completions: 2
+  backoffLimit: 4
+  activeDeadlineSeconds: 60
+  ttlSecondsAfterFinished: 30
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ubuntu
+          image: ubuntu
+          command:
+            - expr
+            - '3'
+            - '+'
+            - '2'

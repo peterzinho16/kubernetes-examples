@@ -1,0 +1,20 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-intentional-fail
+  labels:
+    type: experimental
+    env: local
+spec:
+  completions: 1
+  backoffLimit: 2
+  activeDeadlineSeconds: 10
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ubuntu
+          image: ubuntu
+          command:
+            - ls
+            - '/root/whatever'

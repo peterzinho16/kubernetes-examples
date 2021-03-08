@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-node-selector
+  labels:
+    env: dev
+spec:
+  nodeSelector:
+    nodeType: test
+    size: uncategorized
+  tolerations:
+    - key: app
+      operator: Equal
+      value: blue
+      effect: NoExecute
+    - key: tmp
+      operator: Equal
+      value: test-no-exec
+      effect: NoExecute
+    - key: app
+      operator: Equal
+      value: web
+      effect: NoSchedule
+  containers:
+      - command:
+          - "nginx"
+          - "-g"
+          - "daemon off;"
+        name: nginx
+        image: nginx
+        ports:
+            - containerPort: 80

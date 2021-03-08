@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: job-parallelism
+  labels:
+    type: experimental
+    env: local
+spec:
+  parallelism: 10
+  backoffLimit: 2
+  activeDeadlineSeconds: 300
+  ttlSecondsAfterFinished: 60
+  template:
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: ubuntu-with-curl
+          image: tutum/curl
+          command:
+            - curl
+            - 'http://190.40.213.105:8080/svc/gen/id'

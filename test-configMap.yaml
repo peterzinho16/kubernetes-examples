@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: captcha-configmap
+  namespace: default
+data:
+    useproxy: 'true'
+    proxyhost: '192.168.56.85'
+    proxyport: '3128'
+    urlRecaptcha: 'https://www.google.com/recaptcha/api/siteverify'

@@ -1,0 +1,25 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cronjob-ttl-test
+  labels:
+    type: experimental
+    env: local
+spec:
+  schedule: "* * ? * *"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 10
+      completions: 1
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: ubuntu
+              image: ubuntu
+              command:
+                - expr
+                - '2'
+                - '+'
+                - '4'

@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tecnologia3-seguridad-controlacceso-captcha-microservice
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name: tecnologia3-seguridad-controlacceso-captcha-microservice
+  template:
+    metadata:
+      labels:
+        name: tecnologia3-seguridad-controlacceso-captcha-microservice
+    spec:
+      imagePullSecrets:
+        - name: registrysunat
+      nodeSelector:
+        namespace: "tecnologia.seguridad"
+      containers:
+        - image: integracion1-dr-local.artifactory.insi.sunat.peru/microservices/tecnologia3-seguridad-controlacceso-captcha-microservice:1.0.0-3
+          name: tecnologia3-seguridad-controlacceso-captcha-microservice
+          imagePullPolicy: Always		  
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "400m"
+            limits:
+              memory: "768Mi"
+              cpu: "500m"
+          env:
+            - name: clientsecret
+              valueFrom:
+                secretKeyRef:
+                  name: tecnologia3-seguridad-controlacceso-captcha-microservice-secrets
+                  key: CLIENT_SECRET
+            - name: testclientsecret
+              valueFrom:
+                secretKeyRef:
+                  name: tecnologia3-seguridad-controlacceso-captcha-microservice-secrets
+                  key: TEST_CLIENT_SECRET
+            - name: urlRecaptcha
+              valueFrom:
+                configMapKeyRef:
+                  name: tecnologia3-seguridad-controlacceso-captcha-microservice-configmap
+                  key: urlRecaptcha
+            - name: useproxy
+              valueFrom:
+                configMapKeyRef:
+                  name: tecnologia3-seguridad-controlacceso-captcha-microservice-configmap
+                  key: useproxy
+            - name: proxyhost
+              valueFrom:
+                configMapKeyRef:
+                  name: tecnologia3-seguridad-controlacceso-captcha-microservice-configmap
+                  key: proxyhost
+            - name: proxyport
+              valueFrom:
+                configMapKeyRef:
+                  name: tecnologia3-seguridad-controlacceso-captcha-microservice-configmap
+                  key: proxyport
+          volumeMounts:
+            - mountPath: /config
+              name: tecnologia3-seguridad-controlacceso-captcha-microservice-config
+          ports:
+            - containerPort: 7104
+              protocol: TCP
+            - containerPort: 17104
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 17104
+            initialDelaySeconds: 50
+            periodSeconds: 40
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /healthcheck
+              port: 17104
+            failureThreshold: 5
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 20
+            successThreshold: 1
+      volumes:
+        - name: tecnologia3-seguridad-controlacceso-captcha-microservice-config
+          hostPath:
+            # directory location on host
+            path: /opt/sunat/microservices/config/tecnologia3-seguridad-controlacceso-captcha-microservice
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: tecnologia3-seguridad-controlacceso-captcha-microservice
+spec:
+  maxReplicas: 2
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 75
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: tecnologia3-seguridad-controlacceso-captcha-microservice
+

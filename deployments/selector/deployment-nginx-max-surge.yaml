@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-nginx-feat-max-surge
+  labels:
+    feature: nodeSelector
+spec:
+  template:
+    metadata:
+      name: nginx
+      labels:
+        podAvcSel: test
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-gt-hundred
+                    operator: Gt
+                    values:
+                    - "99"
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+          - containerPort: 80
+  selector:
+    matchLabels:
+      podAvcSel: test
+  replicas: 10
+  strategy:
+    rollingUpdate:
+      maxSurge: "50%"
+      maxUnavailable: "50%"
+    type: RollingUpdate
