@@ -1,0 +1,8 @@
+alias ka='k apply -f'
+alias kdl='k delete -f'
+alias kd='k describe'
+alias ke='k explain'
+alias kg='k get'
+alias kgp='kg pods --show-labels'
+alias kdry='k --dry-run=true -oyaml'
+alias kcns='k config set-context --current --namespace'
