@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    run: nginx-liveness-probes
+  name: nginx-liveness-probes
+spec:
+  containers:
+    - image: nginx
+      name: nginx-liveness-probes
+      resources: {}
+      ports:
+        - containerPort: 80
+          protocol: TCP
+      livenessProbe:
+        httpGet:
+          port: 80
+          path: /
+        initialDelaySeconds: 10
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          port: 80
+        initialDelaySeconds: 60
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}

@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    name: app
+  name: pod-sidecar
+spec:
+  containers:
+    - image: kodekloud/event-simulator
+      imagePullPolicy: Always
+      name: app
+      resources: {}
+      volumeMounts:
+        - mountPath: /log
+          name: log-volume
+          readOnly: false
+    - name: sidecar
+      image: kodekloud/filebeat-configured
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: log-volume
+          mountPath: /var/log/event-simulator/
+          readOnly: false
+  volumes:
+    - name: log-volume
+      hostPath:
+        path: /run/desktop/mnt/host/C/pods/side-card
+        type: DirectoryOrCreate
+  dnsPolicy: ClusterFirst
